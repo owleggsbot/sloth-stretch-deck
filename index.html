@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sloth Stretch Deck</title>
+  <meta name="description" content="Sloth Stretch Deck — premium micro-break routines (eyes, neck, wrists) with a calm timer, printable deck, and shareable completion card. Offline-first." />
+  <meta property="og:title" content="Sloth Stretch Deck" />
+  <meta property="og:description" content="Premium micro-break routines with a calm timer, printable deck, and shareable completion card." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="theme-color" content="#070a0f" />
+
+  <link rel="icon" href="assets/sloth.svg" type="image/svg+xml" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="wrap">
+    <header class="top">
+      <div class="brand">
+        <img class="logo" src="assets/sloth.svg" alt="Sloth" />
+        <div class="brandText">
+          <h1>Sloth Stretch Deck</h1>
+          <p class="tag">3–5 minute micro-breaks • no accounts • offline-first</p>
+        </div>
+      </div>
+
+      <div class="headerActions">
+        <button id="btnStart" class="btn" type="button">Start routine</button>
+        <button id="btnShuffle" class="btn ghost" type="button">Shuffle</button>
+        <button id="btnPrint" class="btn secondary" type="button">Print deck</button>
+      </div>
+    </header>
+
+    <section class="grid">
+      <section class="card">
+        <div class="cardHead">
+          <div>
+            <h2>Routine</h2>
+            <div class="small muted">Pick a curated routine or shuffle a gentle one. Everything is local.</div>
+          </div>
+          <div class="pill">Streak: <span id="streak">0</span></div>
+        </div>
+
+        <div class="presetRow" id="presetRow"></div>
+
+        <div class="player" id="player" hidden>
+          <div class="stepTop">
+            <div>
+              <div class="stepTitle" id="stepTitle">—</div>
+              <div class="stepMeta" id="stepMeta">—</div>
+            </div>
+            <div class="timerBox">
+              <div class="timerLabel">Time</div>
+              <div class="timerValue" id="timer">00:00</div>
+            </div>
+          </div>
+
+          <div class="illustration" aria-hidden="true">
+            <div class="blob" id="blob"></div>
+            <div class="icon" id="icon">🦥</div>
+          </div>
+
+          <div class="stepBody" id="stepBody"></div>
+
+          <div class="row split">
+            <button id="btnPrev" class="btn ghost" type="button">Back</button>
+            <div class="row" style="gap:10px;">
+              <button id="btnPause" class="btn ghost" type="button">Pause</button>
+              <button id="btnNext" class="btn" type="button">Next</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="deck" id="deck"></div>
+      </section>
+
+      <section class="card">
+        <div class="cardHead">
+          <div>
+            <h2>Settings</h2>
+            <div class="small muted">Gentle by default. Adjust if you need.</div>
+          </div>
+        </div>
+
+        <div class="advGrid">
+          <label>
+            Routine length
+            <select id="len">
+              <option value="3">~3 minutes</option>
+              <option value="4" selected>~4 minutes</option>
+              <option value="5">~5 minutes</option>
+            </select>
+          </label>
+
+          <label>
+            Voice cues
+            <select id="voice">
+              <option value="off" selected>off</option>
+              <option value="on">on</option>
+            </select>
+          </label>
+
+          <label>
+            Chime
+            <select id="chime">
+              <option value="soft" selected>soft</option>
+              <option value="none">none</option>
+            </select>
+          </label>
+
+          <label>
+            Visuals
+            <select id="visuals">
+              <option value="on" selected>on</option>
+              <option value="reduced">reduced</option>
+              <option value="off">off</option>
+            </select>
+          </label>
+
+          <label class="check">
+            <input id="autoStart" type="checkbox" />
+            Auto-start after first gesture
+          </label>
+
+          <label class="check">
+            <input id="sound" type="checkbox" checked />
+            Enable audio engine
+          </label>
+        </div>
+
+        <div class="card" style="margin:14px 0 0 0; padding:14px; background:rgba(0,0,0,.18)">
+          <div class="row split">
+            <div>
+              <div class="timerLabel">Last completion</div>
+              <div id="lastDone" class="small muted">—</div>
+            </div>
+            <button id="btnShare" class="btn secondary" type="button" disabled>Share card</button>
+          </div>
+        </div>
+
+        <canvas id="shareCanvas" class="viz" width="1200" height="630" hidden></canvas>
+
+        <div class="footNote muted small">
+          This is not medical advice. If anything hurts, stop. Sloths are not qualified.
+        </div>
+      </section>
+    </section>
+
+    <footer class="foot">
+      <p>Made for desks and nervous systems. <a href="https://github.com/owleggsbot/sloth-stretch-deck" target="_blank" rel="noreferrer">Source</a>.</p>
+    </footer>
+  </main>
+
+  <dialog id="printDialog">
+    <form method="dialog" class="dialog">
+      <h3>Print deck</h3>
+      <p class="muted small">Opens a printable view (A4/Letter-ish). Print from your browser.</p>
+      <div class="row split">
+        <button id="btnOpenPrint" class="btn" type="button">Open print view</button>
+        <button class="btn ghost" value="close">Close</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="shareDialog">
+    <form method="dialog" class="dialog">
+      <h3>Completion card</h3>
+      <p class="muted small">Copy or download. (Clipboard image support varies by browser.)</p>
+      <div class="row" style="gap:10px;">
+        <button id="btnCopy" class="btn secondary" type="button">Copy image</button>
+        <button id="btnDownload" class="btn" type="button">Download PNG</button>
+        <button class="btn ghost" value="close">Close</button>
+      </div>
+      <div class="preview">
+        <img id="shareImg" alt="Completion card" />
+      </div>
+    </form>
+  </dialog>
+
+  <script src="routines.js"></script>
+  <script src="app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
+    }
+  </script>
+</body>
+</html>

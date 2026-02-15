@@ -1,0 +1,12 @@
+{
+  "name": "Sloth Stretch Deck",
+  "short_name": "Stretch Deck",
+  "description": "Premium micro-break routines with calm timing and printable deck.",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#070a0f",
+  "theme_color": "#070a0f",
+  "icons": [
+    {"src": "assets/sloth.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any"}
+  ]
+}
